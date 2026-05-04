@@ -1,5 +1,33 @@
 <?php
+$images = glob($_SERVER['DOCUMENT_ROOT'] . '/img/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+
+$total = count($images);
+
+if ($total < 2) {
+    $selected = $images;
+} else {
+    session_start();
+
+    if (!isset($_SESSION['img_index'])) {
+        $_SESSION['img_index'] = 0;
+    }
+
+    $i = $_SESSION['img_index'];
+
+    $selected = [
+        $images[$i % $total],
+        $images[($i + 1) % $total]
+    ];
+
+    $_SESSION['img_index'] = ($i + 2) % $total;
+}
+
+function toWebPath($path) {
+    return str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($path));
+}
+
 require 'backend/backend.php';
+
 
 $db = getDB();
 $books = getBooks();
@@ -36,11 +64,12 @@ if ($bookCount > 0) {
         <section class="hero">
             <article class="hero-card">
                 <span class="eyebrow">Книжная атмосфера</span>
-                <h1>Тёплая библиотека с мягким древесным характером</h1>
-                <p>
-                    Каталог теперь можно ощущать как спокойное пространство: светлое дерево, хвойная глубина,
-                    стеклянные панели и мягкие акценты, которые не спорят с книгами, а подчёркивают их.
-                </p>
+                <div class="image-container">
+                    <?php foreach ($selected as $img): ?>
+                        <img src="<?= toWebPath($img) ?>" class="main-image">
+                    <?php endforeach; ?>
+                </div>
+                
                 <div class="hero-actions">
                     <a class="button-link" href="subMenus/library.php">Открыть коллекцию</a>
                     <a class="button-link secondary" href="subMenus/form.php">Добавить книгу</a>

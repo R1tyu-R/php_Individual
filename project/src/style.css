@@ -450,3 +450,17 @@ td:nth-child(7) {
         font-size: 32px;
     }
 }
+.image-container {
+    display: flex;
+    gap: 2%;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-image {
+    width: 45%;        /* каждая картинка занимает ~половину блока */
+    max-width: 220px;  /* но не растёт слишком сильно */
+    height: auto;      /* сохраняем пропорции */
+    border-radius: 16px;
+    object-fit: cover;
+}
