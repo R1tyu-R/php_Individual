@@ -28,9 +28,16 @@ function validateFormData(array $data): array
         $errors['pages'][] = "Количество страниц должно быть положительным";
     }
 
-    if ($data['rating'] !== '' && (!is_numeric($data['rating']) || $data['rating'] < 1 || $data['rating'] > 10)) 
+    if (
+        $data['rating'] !== '' &&
+        (
+            !preg_match('/^(10(\.0)?|[1-9](\.[0-9])?)$/', $data['rating']) ||
+            (float) $data['rating'] < 1 ||
+            (float) $data['rating'] > 10
+        )
+    ) 
     {
-        $errors['rating'][] = "Оценка должна быть от 1 до 10";
+        $errors['rating'][] = "Оценка должна быть от 1 до 10 с шагом 0.1";
     }
 
     if ($data['isbn'] !== '' && !preg_match('/^[0-9\-]+$/', $data['isbn'])) 

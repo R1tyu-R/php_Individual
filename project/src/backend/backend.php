@@ -36,7 +36,7 @@ function insertBook($data)
         'publisher' => $data['publisher'],
         'pages' => $data['pages'],
         'isbn' => $data['isbn'],
-        'rating' => $data['rating'],
+        'rating' => $data['rating'] ?: null,
         'description' => $data['note']
     ]);
 

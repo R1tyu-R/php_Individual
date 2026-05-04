@@ -195,6 +195,11 @@ button {
     margin-top: 24px;
 }
 
+.hero-actions .button-link {
+    width: 245px;
+    max-width: 100%;
+}
+
 .stat-card,
 .panel {
     border-radius: 24px;
@@ -208,9 +213,12 @@ button {
     justify-content: space-between;
 }
 
-.stat-card strong {
+.stat-card strong,
+.collection-count {
+    display: block;
     font-size: 34px;
     color: var(--pine-deep);
+    margin: 12px 0 8px;
 }
 
 .stat-card span,
@@ -240,6 +248,10 @@ button {
     justify-content: center;
     gap: 14px;
     margin: 0 0 24px;
+}
+
+.sort-form button {
+    width: 144px;
 }
 
 table {
@@ -463,4 +475,9 @@ td:nth-child(7) {
     height: auto;      /* сохраняем пропорции */
     border-radius: 16px;
     object-fit: cover;
+    transition: opacity 0.25s ease;
+}
+
+.main-image.is-changing {
+    opacity: 0;
 }

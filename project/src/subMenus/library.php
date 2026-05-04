@@ -65,7 +65,7 @@ $editId = $_GET['edit'] ?? null;
                     <td><input name="author" value="<?= htmlspecialchars($book['author']) ?>"></td>
                     <td><input type="date" name="year" value="<?= htmlspecialchars($book['year']) ?>"></td>
                     <td><input name="genre" value="<?= htmlspecialchars($book['genre']) ?>"></td>
-                    <td><input type="number" name="rating" value="<?= htmlspecialchars($book['rating']) ?>"></td>
+                    <td><input type="number" name="rating" value="<?= htmlspecialchars($book['rating']) ?>" min="1" max="10" step="0.1"></td>
 
                     <td>
                         <button type="submit">Сохранить</button>
@@ -82,7 +82,7 @@ $editId = $_GET['edit'] ?? null;
                 <td><?= htmlspecialchars($book['author']) ?></td>
                 <td><?= htmlspecialchars($book['year']) ?></td>
                 <td><?= htmlspecialchars($book['genre']) ?></td>
-                <td><?= htmlspecialchars((string) $book['rating']) ?></td>
+                <td><?= $book['rating'] !== null && $book['rating'] !== '' ? htmlspecialchars(number_format((float) $book['rating'], 1, '.', '')) : '' ?></td>
 
                 <td>
                     <form method="POST" action="logic.php">

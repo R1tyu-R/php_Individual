@@ -64,7 +64,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
 
             <input type="number" name="pages" placeholder="Количество страниц">
             <input type="number" name="isbn" placeholder="ISBN">
-            <input type="number" name="rating" placeholder="Оценка">
+            <input type="number" name="rating" placeholder="Оценка" min="1" max="10" step="0.1">
             <textarea name="note" placeholder="Примечание"></textarea>
 
             <button type="submit">Добавить книгу</button>

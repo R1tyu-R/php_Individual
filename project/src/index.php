@@ -26,6 +26,8 @@ function toWebPath($path) {
     return str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($path));
 }
 
+$imagePaths = array_values(array_map('toWebPath', $images));
+
 require 'backend/backend.php';
 
 
@@ -76,11 +78,7 @@ if ($bookCount > 0) {
                 </div>
             </article>
 
-            <article class="stat-card">
-                <span>Состояние коллекции</span>
-                <strong><?= $bookCount ?></strong>
-                <span>книг уже создают настроение вашей домашней полки</span>
-            </article>
+            <article class="stat-card empty-hero-cell"></article>
         </section>
 
         <section class="feature-grid">
@@ -92,14 +90,41 @@ if ($bookCount > 0) {
                 <h3>Последнее пополнение</h3>
                 <p><?= $recentBook ? htmlspecialchars($recentBook['title']) . ' — ' . htmlspecialchars($recentBook['author']) : 'Коллекция пока пуста, но это хорошее место для красивого старта.' ?></p>
             </article>
-            <article class="panel">
-                <h3>Тон сайта</h3>
-                <p>Сочетание тёплой древесины, стекла и оттенков соснового леса создаёт мягкое, спокойное послевкусие.</p>
+            <article class="panel collection-panel">
+                <h3>Состояние коллекции</h3>
+                <strong class="collection-count"><?= $bookCount ?></strong>
+                <p>книг уже создают настроение вашей домашней полки</p>
             </article>
         </section>
     </div>
 
 </div>
+
+<script>
+    const bookImages = <?= json_encode($imagePaths, JSON_UNESCAPED_SLASHES) ?>;
+    const visibleImages = document.querySelectorAll('.main-image');
+    const changeDelay = 15000;
+    let imageIndex = 0;
+
+    if (bookImages.length > visibleImages.length && visibleImages.length > 0) {
+        const firstVisibleImage = visibleImages[0].getAttribute('src');
+        const currentIndex = bookImages.indexOf(firstVisibleImage);
+        imageIndex = currentIndex >= 0 ? currentIndex : 0;
+
+        setInterval(() => {
+            imageIndex = (imageIndex + visibleImages.length) % bookImages.length;
+
+            visibleImages.forEach((image, offset) => {
+                image.classList.add('is-changing');
+
+                setTimeout(() => {
+                    image.src = bookImages[(imageIndex + offset) % bookImages.length];
+                    image.classList.remove('is-changing');
+                }, 250);
+            });
+        }, changeDelay);
+    }
+</script>
 
 </body>
 </html>
