@@ -1,52 +1,16 @@
 <?php
-$images = glob($_SERVER['DOCUMENT_ROOT'] . '/img/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
 
-$total = count($images);
+require 'backend/homeData.php';
 
-if ($total < 2) {
-    $selected = $images;
-} else {
-    session_start();
+$data = getHomePageData();
 
-    if (!isset($_SESSION['img_index'])) {
-        $_SESSION['img_index'] = 0;
-    }
-
-    $i = $_SESSION['img_index'];
-
-    $selected = [
-        $images[$i % $total],
-        $images[($i + 1) % $total]
-    ];
-
-    $_SESSION['img_index'] = ($i + 2) % $total;
-}
-
-function toWebPath($path) {
-    return str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($path));
-}
-
-$imagePaths = array_values(array_map('toWebPath', $images));
-
-require 'backend/backend.php';
-
-
-$db = getDB();
-$books = getBooks();
-$bookCount = count($books);
-$avgRating = 0;
-$recentBook = null;
-$topRatedBooks = [];
-
-if ($bookCount > 0) {
-    $ratings = array_filter(array_column($books, 'rating'), static fn($rating) => $rating !== null && $rating !== '');
-    $avgRating = count($ratings) > 0 ? round(array_sum($ratings) / count($ratings), 1) : 0;
-    $recentBook = $books[0];
-
-    $topRatedBooks = array_values(array_filter($books, static fn($book) => $book['rating'] !== null && $book['rating'] !== ''));
-    usort($topRatedBooks, static fn($a, $b) => (float) $b['rating'] <=> (float) $a['rating']);
-    $topRatedBooks = array_slice($topRatedBooks, 0, 3);
-}
+$selected = $data['selectedImages'];
+$imagePaths = $data['imagePaths'];
+$books = $data['books'];
+$bookCount = $data['bookCount'];
+$avgRating = $data['avgRating'];
+$recentBook = $data['recentBook'];
+$topRatedBooks = $data['topRatedBooks'];
 ?>
 <!DOCTYPE html>
 <html lang="ru">
