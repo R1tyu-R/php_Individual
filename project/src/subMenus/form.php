@@ -29,7 +29,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
         <section class="panel" style="margin-bottom: 24px;">
             <span class="eyebrow">Новая книга</span>
             <h2>Добавить запись в каталог</h2>
-            <p>Форма оформлена мягче и чище, чтобы добавление книги ощущалось как спокойный рабочий ритуал.</p>
+            <p>------</p>
         </section>
 
         <?php if (!empty($errors)) { ?>

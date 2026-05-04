@@ -73,6 +73,7 @@ function getBooksSorted($sort = null)
     ];
 
     $order = $allowed[$sort] ?? 'id desc';
+    echo 'redis';
     $stmt = $db->query("select * from books order by $order");
     $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
