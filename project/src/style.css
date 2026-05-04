@@ -226,6 +226,85 @@ button {
     color: rgba(32, 57, 47, 0.78);
 }
 
+.top-books-card {
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.top-books-card h3 {
+    margin: 0;
+    color: var(--wood-dark);
+}
+
+.top-books-card p {
+    margin: 0;
+    color: rgba(32, 57, 47, 0.78);
+    font-family: "Segoe UI", sans-serif;
+}
+
+.top-books-list {
+    display: grid;
+    gap: 12px;
+}
+
+.top-book-item {
+    display: grid;
+    grid-template-columns: 38px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 18px;
+    background: rgba(255, 252, 247, 0.34);
+    border: 1px solid rgba(93, 58, 39, 0.07);
+}
+
+.top-book-rank {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(49, 84, 68, 0.12);
+    color: var(--pine-deep);
+    font-weight: 700;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.top-book-info {
+    min-width: 0;
+}
+
+.top-book-info strong,
+.top-book-info span,
+.top-book-rating {
+    font-family: "Segoe UI", sans-serif;
+}
+
+.top-book-info strong {
+    display: block;
+    color: var(--pine-deep);
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.top-book-info span {
+    display: block;
+    margin-top: 4px;
+    color: rgba(32, 57, 47, 0.68);
+    font-size: 13px;
+}
+
+.stat-card .top-book-rating {
+    min-width: 52px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(49, 84, 68, 0.9);
+    color: #fff9f1;
+    font-weight: 700;
+    text-align: center;
+}
+
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

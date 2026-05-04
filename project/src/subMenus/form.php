@@ -26,11 +26,7 @@ unset($_SESSION['errors'], $_SESSION['success']);
     </div>
 
     <div class="content">
-        <section class="panel" style="margin-bottom: 24px;">
-            <span class="eyebrow">Новая книга</span>
-            <h2>Добавить запись в каталог</h2>
-            <p>------</p>
-        </section>
+        
 
         <?php if (!empty($errors)) { ?>
         <div class="errorBox">

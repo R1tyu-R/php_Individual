@@ -27,9 +27,9 @@ $editId = $_GET['edit'] ?? null;
 
     <div class="content">
         <section class="panel" style="margin-bottom: 24px;">
-            <span class="eyebrow">Полка</span>
+            
             <h2>Моя библиотека</h2>
-            <p>Сортируйте книги так, как удобнее: по названию, году или оценке. Визуально таблица стала мягче и легче, но по-прежнему остаётся рабочей.</p>
+            <p>Указаны только книги из основного шкафа</p>
         </section>
 
         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" class="sort-form">

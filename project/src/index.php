@@ -36,11 +36,16 @@ $books = getBooks();
 $bookCount = count($books);
 $avgRating = 0;
 $recentBook = null;
+$topRatedBooks = [];
 
 if ($bookCount > 0) {
     $ratings = array_filter(array_column($books, 'rating'), static fn($rating) => $rating !== null && $rating !== '');
     $avgRating = count($ratings) > 0 ? round(array_sum($ratings) / count($ratings), 1) : 0;
     $recentBook = $books[0];
+
+    $topRatedBooks = array_values(array_filter($books, static fn($book) => $book['rating'] !== null && $book['rating'] !== ''));
+    usort($topRatedBooks, static fn($a, $b) => (float) $b['rating'] <=> (float) $a['rating']);
+    $topRatedBooks = array_slice($topRatedBooks, 0, 3);
 }
 ?>
 <!DOCTYPE html>
@@ -65,7 +70,7 @@ if ($bookCount > 0) {
     <div class="content">
         <section class="hero">
             <article class="hero-card">
-                <span class="eyebrow">Книжная атмосфера</span>
+                
                 <div class="image-container">
                     <?php foreach ($selected as $img): ?>
                         <img src="<?= toWebPath($img) ?>" class="main-image">
@@ -78,7 +83,25 @@ if ($bookCount > 0) {
                 </div>
             </article>
 
-            <article class="stat-card empty-hero-cell"></article>
+            <article class="stat-card top-books-card">
+                <h3>Топ 3 книги</h3>
+                <?php if (empty($topRatedBooks)): ?>
+                    <p>Пока нет оценок для рейтинга.</p>
+                <?php else: ?>
+                    <div class="top-books-list">
+                        <?php foreach ($topRatedBooks as $index => $book): ?>
+                            <div class="top-book-item">
+                                <span class="top-book-rank"><?= $index + 1 ?></span>
+                                <div class="top-book-info">
+                                    <strong><?= htmlspecialchars($book['title']) ?></strong>
+                                    <span><?= htmlspecialchars($book['genre'] ?: '—') ?></span>
+                                </div>
+                                <span class="top-book-rating"><?= htmlspecialchars(number_format((float) $book['rating'], 1, '.', '')) ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </article>
         </section>
 
         <section class="feature-grid">
@@ -93,38 +116,12 @@ if ($bookCount > 0) {
             <article class="panel collection-panel">
                 <h3>Состояние коллекции</h3>
                 <strong class="collection-count"><?= $bookCount ?></strong>
-                <p>книг уже создают настроение вашей домашней полки</p>
+                <p>Книг лежит в шкафу</p>
             </article>
         </section>
     </div>
 
 </div>
-
-<script>
-    const bookImages = <?= json_encode($imagePaths, JSON_UNESCAPED_SLASHES) ?>;
-    const visibleImages = document.querySelectorAll('.main-image');
-    const changeDelay = 15000;
-    let imageIndex = 0;
-
-    if (bookImages.length > visibleImages.length && visibleImages.length > 0) {
-        const firstVisibleImage = visibleImages[0].getAttribute('src');
-        const currentIndex = bookImages.indexOf(firstVisibleImage);
-        imageIndex = currentIndex >= 0 ? currentIndex : 0;
-
-        setInterval(() => {
-            imageIndex = (imageIndex + visibleImages.length) % bookImages.length;
-
-            visibleImages.forEach((image, offset) => {
-                image.classList.add('is-changing');
-
-                setTimeout(() => {
-                    image.src = bookImages[(imageIndex + offset) % bookImages.length];
-                    image.classList.remove('is-changing');
-                }, 250);
-            });
-        }, changeDelay);
-    }
-</script>
 
 </body>
 </html>
