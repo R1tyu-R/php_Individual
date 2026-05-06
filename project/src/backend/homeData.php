@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/backend.php';
+require_once __DIR__ . '/auth.php';
 
 function getImagePaths(): array
 {
@@ -16,8 +17,6 @@ function getSelectedImages(array $images): array
     if ($total < 2) {
         return $images;
     }
-
-    session_start();
 
     if (!isset($_SESSION['img_index'])) {
         $_SESSION['img_index'] = 0;
@@ -44,7 +43,7 @@ function getAverageRating(array $books): float
 {
     $ratings = array_filter(
         array_column($books, 'rating'),
-        static fn($r) => $r !== null && $r !== ''
+        static fn($rating) => $rating !== null && $rating !== ''
     );
 
     if (count($ratings) === 0) {
@@ -63,30 +62,56 @@ function getTopRatedBooks(array $books, int $limit = 3): array
 {
     $filtered = array_values(array_filter(
         $books,
-        static fn($b) => $b['rating'] !== null && $b['rating'] !== ''
+        static fn($book) => $book['rating'] !== null && $book['rating'] !== ''
     ));
 
-    usort($filtered, static fn($a, $b) =>
-        (float)$b['rating'] <=> (float)$a['rating']
-    );
+    usort($filtered, static fn($a, $b) => (float) $b['rating'] <=> (float) $a['rating']);
 
     return array_slice($filtered, 0, $limit);
 }
 
 function getHomePageData(): array
 {
-    $books = getBooks();
-
     $images = glob($_SERVER['DOCUMENT_ROOT'] . '/img/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+    $user = currentUser();
+    $isAuthUser = isAuth();
+
+    if ($isAuthUser) {
+        $books = getBooksByUser((int) $user['id']);
+        $statsTitle = 'Моя коллекция';
+        $statsText = 'На главной показаны только ваши книги, ваши оценки и ваши последние добавления.';
+        $actionPrimaryHref = '/subMenus/library.php';
+        $actionPrimaryText = 'Открыть мою библиотеку';
+        $actionSecondaryHref = '/subMenus/form.php';
+        $actionSecondaryText = 'Добавить книгу';
+        $topTitle = 'Мои лучшие книги';
+    } else {
+        $books = getBooks();
+        $statsTitle = 'Общая коллекция';
+        $statsText = 'Гость видит только общую статистику по всем книгам и может зарегистрироваться.';
+        $actionPrimaryHref = '/login.php';
+        $actionPrimaryText = 'Войти';
+        $actionSecondaryHref = '/register.php';
+        $actionSecondaryText = 'Регистрация';
+        $topTitle = 'Лучшие книги коллекции';
+    }
 
     return [
-        'images' => $images,
+        'isAuth' => $isAuthUser,
+        'user' => $user,
         'selectedImages' => getSelectedImages($images),
         'imagePaths' => getImagePaths(),
         'books' => $books,
         'bookCount' => count($books),
         'avgRating' => getAverageRating($books),
         'recentBook' => getRecentBook($books),
-        'topRatedBooks' => getTopRatedBooks($books)
+        'topRatedBooks' => getTopRatedBooks($books),
+        'statsTitle' => $statsTitle,
+        'statsText' => $statsText,
+        'actionPrimaryHref' => $actionPrimaryHref,
+        'actionPrimaryText' => $actionPrimaryText,
+        'actionSecondaryHref' => $actionSecondaryHref,
+        'actionSecondaryText' => $actionSecondaryText,
+        'topTitle' => $topTitle
     ];
 }
