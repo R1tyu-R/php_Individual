@@ -25,7 +25,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db/seed.sql:/docker-entrypoint-initdb.d/dataSeed.sql
+      - ./db/dataSeed.sql:/docker-entrypoint-initdb.d/dataSeed.sql
 
 
   redis:

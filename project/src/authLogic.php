@@ -2,16 +2,36 @@
 require_once __DIR__ . '/backend/backend.php';
 require_once __DIR__ . '/backend/auth.php';
 
+/**
+ * Сохраняет ранее введенные значения формы авторизации в сессии.
+ *
+ * @param array $data Значения формы, которые можно безопасно показать повторно.
+ * @return void
+ */
 function saveAuthOld(array $data): void
 {
     $_SESSION['auth_old'] = $data;
 }
 
+/**
+ * Сохраняет ошибки проверки формы авторизации в сессии перед перенаправлением.
+ *
+ * @param array $errors Список сообщений об ошибках.
+ * @return void
+ */
 function saveAuthErrors(array $errors): void
 {
     $_SESSION['auth_errors'] = $errors;
 }
 
+/**
+ * Проверяет значения формы регистрации.
+ *
+ * @param string $username Введенное имя пользователя.
+ * @param string $password Введенный пароль.
+ * @param string $repeatPassword Повтор пароля из формы.
+ * @return array Список сообщений об ошибках проверки.
+ */
 function validateRegisterData(string $username, string $password, string $repeatPassword): array
 {
     $errors = [];
@@ -39,6 +59,13 @@ function validateRegisterData(string $username, string $password, string $repeat
     return $errors;
 }
 
+/**
+ * Проверяет значения формы входа.
+ *
+ * @param string $username Введенное имя пользователя.
+ * @param string $password Введенный пароль.
+ * @return array Список сообщений об ошибках проверки.
+ */
 function validateLoginData(string $username, string $password): array
 {
     $errors = [];
@@ -54,6 +81,12 @@ function validateLoginData(string $username, string $password): array
     return $errors;
 }
 
+/**
+ * Сохраняет данные авторизованного пользователя в сессии.
+ *
+ * @param array $user Строка пользователя из базы данных.
+ * @return void
+ */
 function loginUser(array $user): void
 {
     $_SESSION['user'] = [

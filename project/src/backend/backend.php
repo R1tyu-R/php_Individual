@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Создает PDO-подключение к базе данных PostgreSQL.
+ *
+ * @return PDO Активное подключение к базе данных.
+ */
 function getDB()
 {
     return new PDO(
@@ -10,6 +15,11 @@ function getDB()
     );
 }
 
+/**
+ * Создает подключение к Redis, который используется для кеширования книг.
+ *
+ * @return Redis Активное подключение к Redis.
+ */
 function getRedis()
 {
     $redis = new Redis();
@@ -18,12 +28,23 @@ function getRedis()
     return $redis;
 }
 
+/**
+ * Очищает кеш списков книг после изменения коллекции.
+ *
+ * @return void
+ */
 function clearBooksCache(): void
 {
     $redis = getRedis();
     $redis->flushAll();
 }
 
+/**
+ * Находит пользователя по имени.
+ *
+ * @param string $username Имя пользователя из формы входа или регистрации.
+ * @return array|null Строка пользователя или null, если пользователь не найден.
+ */
 function getUserByUsername(string $username): ?array
 {
     $db = getDB();
@@ -36,6 +57,13 @@ function getUserByUsername(string $username): ?array
     return $user ?: null;
 }
 
+/**
+ * Сохраняет нового пользователя в базе данных.
+ *
+ * @param string $username Имя нового пользователя.
+ * @param string $passwordHash Хеш пароля, созданный функцией password_hash().
+ * @return void
+ */
 function createUser(string $username, string $passwordHash): void
 {
     $db = getDB();
@@ -51,6 +79,13 @@ function createUser(string $username, string $passwordHash): void
     ]);
 }
 
+/**
+ * Добавляет новую книгу в коллекцию авторизованного пользователя.
+ *
+ * @param array $data Поля книги из формы добавления.
+ * @param int $userId Идентификатор пользователя, который добавляет книгу.
+ * @return void
+ */
 function insertBook(array $data, int $userId): void
 {
     $db = getDB();
@@ -78,6 +113,11 @@ function insertBook(array $data, int $userId): void
     clearBooksCache();
 }
 
+/**
+ * Возвращает все книги из базы данных.
+ *
+ * @return array Список всех строк книг, отсортированный от новых к старым.
+ */
 function getBooks(): array
 {
     $db = getDB();
@@ -87,6 +127,12 @@ function getBooks(): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+/**
+ * Возвращает все книги с необязательной сортировкой и кратким кешированием в Redis.
+ *
+ * @param string|null $sort Ключ сортировки: title, rating, year или null.
+ * @return array Отсортированный список всех книг.
+ */
 function getBooksSorted(?string $sort = null): array
 {
     $redis = getRedis();
@@ -114,6 +160,13 @@ function getBooksSorted(?string $sort = null): array
     return $books;
 }
 
+/**
+ * Возвращает только книги одного пользователя с необязательной сортировкой.
+ *
+ * @param int $userId Идентификатор владельца коллекции.
+ * @param string|null $sort Ключ сортировки: title, rating, year или null.
+ * @return array Отсортированный список книг пользователя.
+ */
 function getBooksByUser(int $userId, ?string $sort = null): array
 {
     $redis = getRedis();
@@ -142,6 +195,12 @@ function getBooksByUser(int $userId, ?string $sort = null): array
     return $books;
 }
 
+/**
+ * Находит одну книгу по ее идентификатору.
+ *
+ * @param int $id Идентификатор книги.
+ * @return array|null Строка книги или null, если она не существует.
+ */
 function getBookById(int $id): ?array
 {
     $db = getDB();
@@ -154,6 +213,13 @@ function getBookById(int $id): ?array
     return $book ?: null;
 }
 
+/**
+ * Находит книгу только в том случае, если она принадлежит выбранному пользователю.
+ *
+ * @param int $bookId Идентификатор книги.
+ * @param int $userId Идентификатор пользователя.
+ * @return array|null Строка книги или null, если доступ запрещен.
+ */
 function getBookByIdForUser(int $bookId, int $userId): ?array
 {
     $db = getDB();
@@ -172,6 +238,13 @@ function getBookByIdForUser(int $bookId, int $userId): ?array
     return $book ?: null;
 }
 
+/**
+ * Удаляет собственную книгу пользователя из коллекции.
+ *
+ * @param int $bookId Идентификатор книги.
+ * @param int $userId Идентификатор пользователя.
+ * @return void
+ */
 function deleteBookForUser(int $bookId, int $userId): void
 {
     $db = getDB();
@@ -188,6 +261,13 @@ function deleteBookForUser(int $bookId, int $userId): void
     clearBooksCache();
 }
 
+/**
+ * Обновляет книгу, которая принадлежит авторизованному пользователю.
+ *
+ * @param array $data Измененные поля книги из таблицы библиотеки.
+ * @param int $userId Идентификатор текущего пользователя.
+ * @return void
+ */
 function updateBook(array $data, int $userId): void
 {
     $db = getDB();

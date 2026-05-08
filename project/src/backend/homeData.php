@@ -3,6 +3,11 @@
 require_once __DIR__ . '/backend.php';
 require_once __DIR__ . '/auth.php';
 
+/**
+ * Собирает веб-пути к изображениям обложек из публичной папки img.
+ *
+ * @return array Список путей к изображениям, доступных для HTML.
+ */
 function getImagePaths(): array
 {
     $images = glob($_SERVER['DOCUMENT_ROOT'] . '/img/*.{jpg,jpeg,png,gif}', GLOB_BRACE);
@@ -10,6 +15,12 @@ function getImagePaths(): array
     return array_values(array_map('toWebPath', $images));
 }
 
+/**
+ * Выбирает два изображения для главной страницы и запоминает следующую позицию в сессии.
+ *
+ * @param array $images Доступные пути к изображениям.
+ * @return array Выбранные пути к изображениям.
+ */
 function getSelectedImages(array $images): array
 {
     $total = count($images);
@@ -34,11 +45,23 @@ function getSelectedImages(array $images): array
     return $selected;
 }
 
+/**
+ * Преобразует серверный путь к файлу в путь для браузера.
+ *
+ * @param string $path Абсолютный путь внутри корневой папки сайта.
+ * @return string Относительный веб-путь для атрибутов src или href.
+ */
 function toWebPath(string $path): string
 {
     return str_replace($_SERVER['DOCUMENT_ROOT'], '', realpath($path));
 }
 
+/**
+ * Вычисляет среднюю оценку для книг, у которых она указана.
+ *
+ * @param array $books Строки книг из базы данных.
+ * @return float Средняя оценка, округленная до одного знака, или 0, если оценок нет.
+ */
 function getAverageRating(array $books): float
 {
     $ratings = array_filter(
@@ -53,11 +76,24 @@ function getAverageRating(array $books): float
     return round(array_sum($ratings) / count($ratings), 1);
 }
 
+/**
+ * Возвращает самую новую книгу из уже отсортированного списка.
+ *
+ * @param array $books Строки книг, отсортированные от новых к старым.
+ * @return array|null Первая строка книги или null для пустой коллекции.
+ */
 function getRecentBook(array $books): ?array
 {
     return $books[0] ?? null;
 }
 
+/**
+ * Формирует список книг с лучшими оценками.
+ *
+ * @param array $books Строки книг из текущей коллекции.
+ * @param int $limit Максимальное количество книг в результате.
+ * @return array Лучшие книги, отсортированные по оценке по убыванию.
+ */
 function getTopRatedBooks(array $books, int $limit = 3): array
 {
     $filtered = array_values(array_filter(
@@ -70,6 +106,11 @@ function getTopRatedBooks(array $books, int $limit = 3): array
     return array_slice($filtered, 0, $limit);
 }
 
+/**
+ * Подготавливает все данные для главной страницы в гостевом или авторизованном режиме.
+ *
+ * @return array Тексты, изображения, статистика и списки книг для вывода index.php.
+ */
 function getHomePageData(): array
 {
     $images = glob($_SERVER['DOCUMENT_ROOT'] . '/img/*.{jpg,jpeg,png,gif}', GLOB_BRACE);

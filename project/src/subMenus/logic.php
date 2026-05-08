@@ -4,6 +4,12 @@ require_once __DIR__ . '/../backend/backend.php';
 
 requireAuth();
 
+/**
+ * Проверяет данные формы книги перед добавлением или обновлением записи.
+ *
+ * @param array $data Поля книги, полученные из POST-запроса.
+ * @return array Ошибки, сгруппированные по названию поля.
+ */
 function validateFormData(array $data): array
 {
     $errors = [];
