@@ -1,4 +1,3 @@
-
 create table users 
 (
     id serial primary key,
@@ -18,7 +17,7 @@ create table books
     publisher text,
     pages integer,
     isbn text,
-    rating integer,
+    rating NUMERIC(3,1),
     description text,
     created_by integer,
     foreign key (created_by) references users(id) on delete set null
